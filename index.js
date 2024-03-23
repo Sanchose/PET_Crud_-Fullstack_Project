@@ -25,7 +25,7 @@ app.post("/auth/login", async (req, res) => {
 
     if (!user) {
       return req.status(404).json({
-        message: "User not found",
+        message: "User not Found",
       });
     }
 
