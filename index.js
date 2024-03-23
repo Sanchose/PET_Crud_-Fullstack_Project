@@ -39,7 +39,7 @@ app.post("/auth/login", async (req, res) => {
         message: "Incorrect Login or Password",
       });
     }
-  } catch (err) {}
+  } catch (err ) {}
 });
 
 app.post("/auth/register", registerValidation, async (req, res) => {
