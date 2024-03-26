@@ -16,7 +16,40 @@ export const getOne = async (req, res) => {
   try {
     const postId = req.params.id;
 
-    PostModel.findOneAndUpdate(
+    PostModel.findOneAndDelete(
+      {
+        _id: postId,
+      },
+      (err, doc) => {
+        if (err) {
+          console.log(err);
+          res.status(500).json({
+            message: "Failed to delete a post",
+          });
+        }
+        if (!doc) {
+          return res.status(404).json({
+            message: "Post not found",
+          });
+        }
+        res.json({
+          success: true,
+        });
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Failed to retrieve a post",
+    });
+  }
+};
+
+export const remove = async (req, res) => {
+  try {
+    const postId = req.params.id;
+
+    const updatedPost = await PostModel.findByIdAndDelete(
       {
         _id: postId,
       },
@@ -25,20 +58,20 @@ export const getOne = async (req, res) => {
       },
       {
         returnDocument: "after",
-      },
-      (err, doc) => {
-        if (err) {
-          console.log(err);
-          res.status(500).json({
-            message: "Failed to return a post",
-          });
-        }
       }
     );
+
+    if (!updatedPost) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
+
+    res.json(updatedPost);
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "No posts founded",
+      message: "Failed to retrieve a post",
     });
   }
 };
@@ -59,6 +92,34 @@ export const create = async (req, res) => {
     console.log(err);
     res.status(500).json({
       message: "Error, no new post",
+    });
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    const postId = req.params.id;
+
+    const updatedPost = await PostModel.updateOne(
+      {
+        _id: postId,
+      },
+      {
+        title: req.body.title,
+        text: req.body.text,
+        imageUrl: req.body.imageUrl,
+        user: req.userId,
+        tags: req.body.tags,
+      }
+    );
+
+    res.json({
+      success: true,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Failed to update a post",
     });
   }
 };
